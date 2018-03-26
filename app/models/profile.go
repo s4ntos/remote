@@ -128,15 +128,5 @@ func (p *Profile) PostGet(exe gorp.SqlExecutor) error {
 	}
 	p.User = obj.(*User)
 
-	/*obj, err = exe.Get(Post{}, p.ProfileId)
-	if err != nil {
-		return fmt.Errorf("Error loading a profile's posts (%d): %s", p.ProfileId, err)
-	}
-	var posts []*Post
-	for _, post := range obj {
-		posts = append(posts, post.(*Post))
-	}
-	p.Posts = posts*/
-
 	return nil
 }

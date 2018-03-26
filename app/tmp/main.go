@@ -609,9 +609,9 @@ func main() {
 		},
 	}
 	testing.TestSuites = []interface{}{ 
+		(*tests.ProfileTest)(nil),
 		(*tests.ApplicationTest)(nil),
 		(*tests.AccountsTest)(nil),
-		(*tests.ProfileTest)(nil),
 	}
 
 	revel.Run(*port)

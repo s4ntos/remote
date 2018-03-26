@@ -12,7 +12,6 @@ import (
 	r "github.com/revel/revel"
 	"github.com/revel/modules/db/app"
 	"github.com/s4ntos/remote/app/models"
-	"time"
 )
 
 var (
@@ -80,74 +79,39 @@ func InitDB() {
 	// Create tables in datastore if they don't already exist
 	Dbm.CreateTablesIfNotExists()
 
-	// Set up database test data in 'test' run mode
-	// e.g. `$> revel run baseapp test`
-	if r.RunMode == "test" {
+	count, err := Dbm.SelectInt("select count(1) from User")
+	if err != nil {
+		panic(err)
+	}
+	
+	// Set up database if we don't have any users inside 
+	if count == 0  {
+		adminUsername := r.Config.StringDefault("admin.username","admin")
+		adminPassword := r.Config.StringDefault("admin.password","adminuser")
 
-		bcryptPassword, _ := bcrypt.GenerateFromPassword(
-			[]byte("demouser"), bcrypt.DefaultCost)
-		demoUser := &models.User{
-			Email:          "demo@demo.com",
-			HashedPassword: bcryptPassword,
+		bcryptAdminPassword, _ := bcrypt.GenerateFromPassword(
+			[]byte(adminPassword), bcrypt.DefaultCost)
+		adminUser := &models.User{
+			Email:          "admin@demo.com",
+			HashedPassword: bcryptAdminPassword,
 			Confirmed:      false,
 		}
-		otherUser := &models.User{
-			Email:          "demo1@demo1.com",
-			HashedPassword: bcryptPassword,
-			Confirmed:      false,
-		}
-		if err := Dbm.Insert(demoUser, otherUser); err != nil {
+		if err := Dbm.Insert(adminUser); err != nil {
 			panic(err)
 		}
 
-		demoProfile := &models.Profile{
-			UserId:             demoUser.UserId,
-			UserName:           "demouser",
-			Name:               "Demo User",
-			Summary:            "Just a regular guy",
-			Description:        "...",
-			PhotoUrl:           "http://www.gravatar.com/avatar/53444f91e698c0c7caa2dbc3bdbf93fc?s=128&d=identicon",
-			User:               demoUser,
-			AggregateFollowing: 1,
+		adminProfile := &models.Profile{
+			UserId:             adminUser.UserId,
+			UserName:           adminUsername,
+			Name:               "Admin User",
+			Summary:            "Just the admin of the joint",
+			Description:        "Yes I'm the Admin",
+			PhotoUrl:           "/public/images/admin.png",
+			User:               adminUser,
+			AggregateFollowing: 0,
 		}
-		otherProfile := &models.Profile{
-			UserId:             otherUser.UserId,
-			UserName:           "otheruser",
-			Name:               "Other User",
-			Summary:            "Just another regular guy",
-			Description:        "...",
-			PhotoUrl:           "http://www.gravatar.com/avatar/740fcda1a2304bd073b46f405b3622ce?s=128&d=identicon",
-			User:               otherUser,
-			AggregateFollowers: 1,
-		}
-		if err := Dbm.Insert(demoProfile, otherProfile); err != nil {
-			panic(err)
-		}
-
-		demoPost := &models.Post{
-			ProfileId:  demoProfile.ProfileId,
-			Title:      "Hello World",
-			ContentStr: "Full markdown support with things like [links](http://example.org)!",
-			Status:     "public",
-			DateObj:    time.Now(),
-		}
-		otherPost := &models.Post{
-			ProfileId:      otherProfile.ProfileId,
-			Title:          "Hello World 1",
-			ContentStr:     "This post does not belong to demo@demo.com account",
-			Status:         "public",
-			DateObj:        time.Now(),
-			AggregateLikes: 8,
-		}
-		if err := Dbm.Insert(demoPost, otherPost); err != nil {
-			panic(err)
-		}
-
-		demoFollow := &models.Follower{
-			UserId:       demoUser.UserId,
-			FollowUserId: otherUser.UserId,
-		}
-		if err := Dbm.Insert(demoFollow); err != nil {
+		
+		if err := Dbm.Insert(adminProfile); err != nil {
 			panic(err)
 		}
 
