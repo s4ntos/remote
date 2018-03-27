@@ -12,7 +12,7 @@ Remote is a web application that provides web application for web remote desktop
 To start application:
 
 ```bash
-GOPATH=`pwd`
+export GOPATH=`pwd`
 go get -v -u github.com/revel/cmd/revel
 export PATH=$PATH:$GOPATH/bin
 go get github.com/s4ntos/remote
