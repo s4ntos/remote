@@ -7,3 +7,16 @@ Remote APP
 Remote is a web application that provides web application for web remote desktop.
 
 * Basic pages (Home, About Us, Contact Us, etc) working
+
+
+To start application:
+
+```bash
+GOPATH=`pwd`
+go get -v -u github.com/revel/cmd/revel
+export PATH=$PATH:$GOPATH/bin
+go get github.com/s4ntos/remote
+revel run github.com/s4ntos/remote
+```
+
+On windows you will need to install a GCC, this as been tested with [TDM-GCC](http://tdm-gcc.tdragon.net/download)
