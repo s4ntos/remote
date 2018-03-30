@@ -16,6 +16,24 @@
 
 <hr>
 
+<h3>Roles</h3>
+
+{{ if .roles }}
+
+		<ul class="roles"> <!-- Needs a proper class -->
+			{{range .roles}}
+			<li class="badge"> <!-- Needs a proper class -->
+				{{.RoleId}}
+			</li>
+			{{end}}
+		</ul>
+
+{{ else }}
+
+	<p><em>No Roles ?? </em></p>
+
+{{ end }}
+
 <h3>Posts</h3>
 
 {{$isOwner := .isOwner}}

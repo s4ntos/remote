@@ -93,9 +93,9 @@
 								<li><a href="{{url "Account.Logout"}}">Logout</a></li>
 							</ul>
 						</li>
+						<li{{if eq .action "account/register"}} class="active"{{end}}><a href="{{url "Account.Register"}}">Register</a></li>
 					{{else}}
 						<li{{if eq .action "account/login"}} class="active"{{end}}><a href="{{url "Account.Login"}}">Sign-in</a></li>
-						<li{{if eq .action "account/register"}} class="active"{{end}}><a href="{{url "Account.Register"}}">Register</a></li>
 					{{end}}
 					</ul>
 				</div>

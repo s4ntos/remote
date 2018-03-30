@@ -168,7 +168,7 @@ func main() {
 				Args: []*revel.MethodArg{ 
 				},
 				RenderArgNames: map[int][]string{ 
-					99: []string{ 
+					104: []string{ 
 					},
 				},
 			},
@@ -187,7 +187,7 @@ func main() {
 				Args: []*revel.MethodArg{ 
 				},
 				RenderArgNames: map[int][]string{ 
-					192: []string{ 
+					197: []string{ 
 						"hasEmailCapability",
 					},
 				},
@@ -207,7 +207,7 @@ func main() {
 				Args: []*revel.MethodArg{ 
 				},
 				RenderArgNames: map[int][]string{ 
-					239: []string{ 
+					244: []string{ 
 					},
 				},
 			},
@@ -225,7 +225,7 @@ func main() {
 					&revel.MethodArg{Name: "token", Type: reflect.TypeOf((*string)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
-					298: []string{ 
+					303: []string{ 
 						"existingProfile",
 					},
 				},
@@ -459,10 +459,11 @@ func main() {
 					&revel.MethodArg{Name: "username", Type: reflect.TypeOf((*string)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
-					72: []string{ 
+					81: []string{ 
 						"title",
 						"profile",
 						"posts",
+						"roles",
 						"isOwner",
 						"isFollowing",
 					},
@@ -474,7 +475,7 @@ func main() {
 					&revel.MethodArg{Name: "username", Type: reflect.TypeOf((*string)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
-					82: []string{ 
+					91: []string{ 
 						"profile",
 					},
 				},
@@ -495,7 +496,7 @@ func main() {
 					&revel.MethodArg{Name: "username", Type: reflect.TypeOf((*string)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
-					201: []string{ 
+					210: []string{ 
 					},
 				},
 			},
@@ -515,7 +516,7 @@ func main() {
 					&revel.MethodArg{Name: "username", Type: reflect.TypeOf((*string)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
-					259: []string{ 
+					268: []string{ 
 						"followResponse",
 					},
 				},
@@ -527,7 +528,7 @@ func main() {
 					&revel.MethodArg{Name: "page", Type: reflect.TypeOf((*int)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
-					366: []string{ 
+					375: []string{ 
 						"profile",
 						"isOwner",
 						"isFollowing",
@@ -544,7 +545,7 @@ func main() {
 					&revel.MethodArg{Name: "page", Type: reflect.TypeOf((*int)(nil)) },
 				},
 				RenderArgNames: map[int][]string{ 
-					396: []string{ 
+					405: []string{ 
 						"profile",
 						"isOwner",
 						"isFollowing",
@@ -559,18 +560,18 @@ func main() {
 	
 	revel.DefaultValidationKeys = map[string]map[int]string{ 
 		"github.com/s4ntos/remote/app/controllers.Account.SaveUser": { 
-			113: "user.Password",
-			114: "lcPass",
+			118: "user.Password",
+			119: "lcPass",
 		},
 		"github.com/s4ntos/remote/app/controllers.Profile.UpdatePassword": { 
-			226: "password",
-			227: "verifyPassword",
-			228: "verifyPassword",
+			235: "password",
+			236: "verifyPassword",
+			237: "verifyPassword",
 		},
 		"github.com/s4ntos/remote/app/controllers.Profile.UpdateSettings": { 
-			105: "User.Password",
-			106: "verifyPassword",
-			107: "verifyPassword",
+			114: "User.Password",
+			115: "verifyPassword",
+			116: "verifyPassword",
 		},
 		"github.com/s4ntos/remote/app/models.ValidatePostTitle": { 
 			29: "title",
@@ -596,6 +597,17 @@ func main() {
 			49: "username",
 			54: "username",
 		},
+		"github.com/s4ntos/remote/app/models.ValidateRoleDescription": { 
+			58: "description",
+		},
+		"github.com/s4ntos/remote/app/models.ValidateRoleName": { 
+			39: "role",
+			44: "role",
+			49: "role",
+		},
+		"github.com/s4ntos/remote/app/models.ValidateRolePrivileges": { 
+			64: "privileges",
+		},
 		"github.com/s4ntos/remote/app/models.ValidateUserEmail": { 
 			41: "email",
 			46: "email",
@@ -609,9 +621,9 @@ func main() {
 		},
 	}
 	testing.TestSuites = []interface{}{ 
-		(*tests.ProfileTest)(nil),
-		(*tests.ApplicationTest)(nil),
 		(*tests.AccountsTest)(nil),
+		(*tests.ApplicationTest)(nil),
+		(*tests.ProfileTest)(nil),
 	}
 
 	revel.Run(*port)

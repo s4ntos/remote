@@ -1,17 +1,18 @@
 package controllers
 
 import (
-	"golang.org/x/crypto/bcrypt"
 	"database/sql"
+
 	"github.com/go-gorp/gorp"
+	_ "github.com/lib/pq"
 	_ "github.com/mattn/go-sqlite3"
+	"github.com/revel/modules/db/app"
+	r "github.com/revel/revel"
+	"github.com/s4ntos/remote/app/models"
 	_ "github.com/ziutek/mymysql/godrv"
 	_ "github.com/ziutek/mymysql/mysql"
 	_ "github.com/ziutek/mymysql/native" // Native engine
-	_ "github.com/lib/pq"
-	r "github.com/revel/revel"
-	"github.com/revel/modules/db/app"
-	"github.com/s4ntos/remote/app/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -23,7 +24,7 @@ func InitDB() {
 
 	dbDriver := r.Config.StringDefault("db.driver", "sqlite3")
 
-	if (dbDriver == "mysql" || dbDriver == "mymysql") {
+	if dbDriver == "mysql" || dbDriver == "mymysql" {
 		Dbm = &gorp.DbMap{Db: db.Db, Dialect: gorp.MySQLDialect{"InnoDB", "UTF8"}}
 	} else if dbDriver == "postgres" {
 		Dbm = &gorp.DbMap{Db: db.Db, Dialect: gorp.PostgresDialect{}}
@@ -37,7 +38,15 @@ func InitDB() {
 		}
 	}
 
-	t := Dbm.AddTable(models.User{}).SetKeys(true, "UserId")
+	t := Dbm.AddTable(models.Role{}).SetKeys(true, "RoleId")
+	setColumnSizes(t, map[string]int{
+		"Role":        64,
+		"Description": 400,
+		"Privileges":  200, // To be changed for know only Admin or something else
+	})
+	t = Dbm.AddTable(models.Roles{})
+
+	t = Dbm.AddTable(models.User{}).SetKeys(true, "UserId")
 	t.ColMap("Password").Transient = true
 	t.ColMap("Created").Transient = true
 	t.ColMap("Profile").Transient = true
@@ -83,11 +92,20 @@ func InitDB() {
 	if err != nil {
 		panic(err)
 	}
-	
-	// Set up database if we don't have any users inside 
-	if count == 0  {
-		adminUsername := r.Config.StringDefault("admin.username","admin")
-		adminPassword := r.Config.StringDefault("admin.password","adminuser")
+
+	// Set up database if we don't have any users inside
+	if count == 0 {
+		adminUsername := r.Config.StringDefault("admin.username", "admin")
+		adminPassword := r.Config.StringDefault("admin.password", "adminuser")
+
+		adminRole := &models.Role{
+			Role:        "admin",
+			Description: "Admin user",
+			Privileges:  "admin",
+		}
+		if err := Dbm.Insert(adminRole); err != nil {
+			panic(err)
+		}
 
 		bcryptAdminPassword, _ := bcrypt.GenerateFromPassword(
 			[]byte(adminPassword), bcrypt.DefaultCost)
@@ -110,11 +128,17 @@ func InitDB() {
 			User:               adminUser,
 			AggregateFollowing: 0,
 		}
-		
+
 		if err := Dbm.Insert(adminProfile); err != nil {
 			panic(err)
 		}
-
+		adminRoles := &models.Roles{
+			RoleId:    adminRole.RoleId,
+			ProfileId: adminProfile.ProfileId,
+		}
+		if err := Dbm.Insert(adminRoles); err != nil {
+			panic(err)
+		}
 	}
 
 }

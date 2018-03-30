@@ -96,6 +96,11 @@ func (c Account) Index() r.Result {
 }
 
 func (c Account) Register() r.Result {
+	profile := c.connected()
+	if profile == nil  {
+		c.Flash.Error("You must log in to access your account")
+		return c.Redirect(routes.Account.Logout())
+	}
 	return c.Render()
 }
 

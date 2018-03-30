@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	"golang.org/x/crypto/bcrypt"
+	"strings"
+
 	r "github.com/revel/revel"
 	"github.com/s4ntos/remote/app/models"
 	"github.com/s4ntos/remote/app/routes"
-	"strings"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type Profile struct {
@@ -64,12 +65,20 @@ func (c Profile) Show(username string) r.Result {
 			posts = append(posts, r.(*models.Post))
 		}
 	}
+	// Retrieve all roles for profile
+	var roles []*models.Roles
+	results, err = c.Txn.Select(models.Roles{}, `select * from Roles where ProfileId = ?`, profile.ProfileId)
+	if err == nil {
+		for _, r := range results {
+			roles = append(roles, r.(*models.Roles))
+		}
+	}
 
 	appName := r.Config.StringDefault("app.name", "BaseApp")
 
 	title := profile.Name + " on " + appName
 
-	return c.Render(title, profile, posts, isOwner, isFollowing)
+	return c.Render(title, profile, posts, roles, isOwner, isFollowing)
 }
 
 func (c Profile) Settings(username string) r.Result {

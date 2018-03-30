@@ -7,6 +7,7 @@ Remote APP
 Remote is a web application that provides web application for web remote desktop.
 
 * Basic pages (Home, About Us, Contact Us, etc) working
+* First roles configuration working
 
 
 To start application:
